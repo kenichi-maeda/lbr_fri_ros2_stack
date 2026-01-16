@@ -5,6 +5,7 @@
 #include <string>
 #include <vector>
 
+#include "controller_interface/controller_interface.hpp"
 #include "hardware_interface/system_interface.hpp"
 #include "pluginlib/class_loader.hpp"
 #include "rclcpp/rclcpp.hpp"

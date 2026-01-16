@@ -152,6 +152,7 @@ target_include_directories(
 
 ament_target_dependencies(
   lbr_ros2_control_selector
+  controller_interface
   hardware_interface
   pluginlib
   rclcpp
