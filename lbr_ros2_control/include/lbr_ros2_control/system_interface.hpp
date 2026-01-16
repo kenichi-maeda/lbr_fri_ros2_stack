@@ -29,6 +29,10 @@
 #include "lbr_fri_ros2/types.hpp"
 #include "lbr_ros2_control/system_interface_type_values.hpp"
 
+#ifndef LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME
+#define LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME SystemInterface
+#endif
+
 namespace lbr_ros2_control {
 struct SystemInterfaceParameters {
   uint8_t fri_client_sdk_major_version{1};
@@ -64,7 +68,7 @@ struct EstimatedFTSensorParameters {
   double torque_z_th{0.5};
 };
 
-class SystemInterface : public hardware_interface::SystemInterface {
+class LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME : public hardware_interface::SystemInterface {
 protected:
   static constexpr char LOGGER_NAME[] = "lbr_ros2_control::SystemInterface";
 
@@ -81,7 +85,7 @@ protected:
   static constexpr uint8_t GPIO_SIZE = 1;
 
 public:
-  SystemInterface() = default;
+  LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME() = default;
 
   // hardware interface
   controller_interface::CallbackReturn

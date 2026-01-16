@@ -24,7 +24,7 @@
             </xacro:if>
             <xacro:if value="${mode == 'hardware'}">
                 <hardware>
-                    <plugin>lbr_ros2_control::SystemInterface</plugin>
+                    <plugin>lbr_ros2_control::SystemInterfaceSelector</plugin>
                     <param name="fri_client_sdk_major_version">${system_config['hardware']['fri_client_sdk']['major_version']}</param>
                     <param name="fri_client_sdk_minor_version">${system_config['hardware']['fri_client_sdk']['minor_version']}</param>
                     <param name="client_command_mode">${system_config['hardware']['client_command_mode']}</param>

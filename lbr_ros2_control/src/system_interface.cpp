@@ -2,7 +2,7 @@
 
 namespace lbr_ros2_control {
 controller_interface::CallbackReturn
-SystemInterface::on_init(const hardware_interface::HardwareInfo &system_info) {
+LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::on_init(const hardware_interface::HardwareInfo &system_info) {
   auto ret = hardware_interface::SystemInterface::on_init(system_info);
   if (ret != controller_interface::CallbackReturn::SUCCESS) {
     RCLCPP_ERROR_STREAM(rclcpp::get_logger(LOGGER_NAME),
@@ -106,7 +106,7 @@ SystemInterface::on_init(const hardware_interface::HardwareInfo &system_info) {
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-std::vector<hardware_interface::StateInterface> SystemInterface::export_state_interfaces() {
+std::vector<hardware_interface::StateInterface> LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::export_state_interfaces() {
   std::vector<hardware_interface::StateInterface> state_interfaces;
   // state interfaces of type double
   for (std::size_t i = 0; i < info_.joints.size(); ++i) {
@@ -171,7 +171,7 @@ std::vector<hardware_interface::StateInterface> SystemInterface::export_state_in
   return state_interfaces;
 }
 
-std::vector<hardware_interface::CommandInterface> SystemInterface::export_command_interfaces() {
+std::vector<hardware_interface::CommandInterface> LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::export_command_interfaces() {
   std::vector<hardware_interface::CommandInterface> command_interfaces;
   for (std::size_t i = 0; i < info_.joints.size(); ++i) {
     command_interfaces.emplace_back(info_.joints[i].name, hardware_interface::HW_IF_POSITION,
@@ -193,12 +193,12 @@ std::vector<hardware_interface::CommandInterface> SystemInterface::export_comman
 }
 
 hardware_interface::return_type
-SystemInterface::prepare_command_mode_switch(const std::vector<std::string> & /*start_interfaces*/,
+LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::prepare_command_mode_switch(const std::vector<std::string> & /*start_interfaces*/,
                                              const std::vector<std::string> & /*stop_interfaces*/) {
   return hardware_interface::return_type::OK;
 }
 
-controller_interface::CallbackReturn SystemInterface::on_activate(const rclcpp_lifecycle::State &) {
+controller_interface::CallbackReturn LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::on_activate(const rclcpp_lifecycle::State &) {
   if (!async_client_ptr_) {
     RCLCPP_ERROR_STREAM(rclcpp::get_logger(LOGGER_NAME), lbr_fri_ros2::ColorScheme::ERROR
                                                              << "AsyncClient not configured"
@@ -264,7 +264,7 @@ controller_interface::CallbackReturn SystemInterface::on_activate(const rclcpp_l
 }
 
 controller_interface::CallbackReturn
-SystemInterface::on_deactivate(const rclcpp_lifecycle::State &) {
+LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::on_deactivate(const rclcpp_lifecycle::State &) {
   app_ptr_->request_stop();
   app_ptr_->close_udp_socket();
   if (ft_estimator_ptr_) {
@@ -273,7 +273,7 @@ SystemInterface::on_deactivate(const rclcpp_lifecycle::State &) {
   return controller_interface::CallbackReturn::SUCCESS;
 }
 
-hardware_interface::return_type SystemInterface::read(const rclcpp::Time & /*time*/,
+hardware_interface::return_type LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::read(const rclcpp::Time & /*time*/,
                                                       const rclcpp::Duration &period) {
   if (!async_client_ptr_->get_state_interface()->is_initialized()) {
     return hardware_interface::return_type::OK;
@@ -329,7 +329,7 @@ hardware_interface::return_type SystemInterface::read(const rclcpp::Time & /*tim
   return hardware_interface::return_type::OK;
 }
 
-hardware_interface::return_type SystemInterface::write(const rclcpp::Time & /*time*/,
+hardware_interface::return_type LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::write(const rclcpp::Time & /*time*/,
                                                        const rclcpp::Duration & /*period*/) {
   if (hw_session_state_ != KUKA::FRI::COMMANDING_ACTIVE) {
     return hardware_interface::return_type::OK;
@@ -338,7 +338,7 @@ hardware_interface::return_type SystemInterface::write(const rclcpp::Time & /*ti
   return hardware_interface::return_type::OK;
 }
 
-bool SystemInterface::parse_parameters_(const hardware_interface::HardwareInfo &system_info) {
+bool LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::parse_parameters_(const hardware_interface::HardwareInfo &system_info) {
   try {
     parameters_.fri_client_sdk_major_version =
         std::stoul(system_info.hardware_parameters.at("fri_client_sdk_major_version"));
@@ -407,13 +407,13 @@ bool SystemInterface::parse_parameters_(const hardware_interface::HardwareInfo &
   return true;
 }
 
-void SystemInterface::nan_command_interfaces_() {
+void LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::nan_command_interfaces_() {
   hw_lbr_command_.joint_position.fill(std::numeric_limits<double>::quiet_NaN());
   hw_lbr_command_.torque.fill(std::numeric_limits<double>::quiet_NaN());
   hw_lbr_command_.wrench.fill(std::numeric_limits<double>::quiet_NaN());
 }
 
-void SystemInterface::nan_state_interfaces_() {
+void LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::nan_state_interfaces_() {
   // state interfaces of type double
   hw_lbr_state_.measured_joint_position.fill(std::numeric_limits<double>::quiet_NaN());
 #if FRI_CLIENT_VERSION_MAJOR == 1
@@ -445,7 +445,7 @@ void SystemInterface::nan_state_interfaces_() {
   hw_ft_.fill(std::numeric_limits<double>::quiet_NaN());
 }
 
-bool SystemInterface::verify_number_of_joints_() {
+bool LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::verify_number_of_joints_() {
   if (info_.joints.size() != lbr_fri_ros2::N_JNTS) {
     RCLCPP_ERROR_STREAM(rclcpp::get_logger(LOGGER_NAME),
                         lbr_fri_ros2::ColorScheme::ERROR
@@ -456,7 +456,7 @@ bool SystemInterface::verify_number_of_joints_() {
   return true;
 }
 
-bool SystemInterface::verify_joint_command_interfaces_() {
+bool LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::verify_joint_command_interfaces_() {
   // check command interfaces
   for (auto &joint : info_.joints) {
     if (joint.command_interfaces.size() != LBR_FRI_COMMAND_INTERFACE_SIZE) {
@@ -486,7 +486,7 @@ bool SystemInterface::verify_joint_command_interfaces_() {
   return true;
 }
 
-bool SystemInterface::verify_joint_state_interfaces_() {
+bool LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::verify_joint_state_interfaces_() {
   // check state interfaces
   for (auto &joint : info_.joints) {
     if (joint.state_interfaces.size() != LBR_FRI_STATE_INTERFACE_SIZE) {
@@ -521,7 +521,7 @@ bool SystemInterface::verify_joint_state_interfaces_() {
   return true;
 }
 
-bool SystemInterface::verify_sensors_() {
+bool LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::verify_sensors_() {
   // check lbr specific state interfaces
   if (info_.sensors.size() != LBR_FRI_SENSORS) {
     RCLCPP_ERROR_STREAM(rclcpp::get_logger(LOGGER_NAME),
@@ -542,7 +542,7 @@ bool SystemInterface::verify_sensors_() {
   return true;
 }
 
-bool SystemInterface::verify_auxiliary_sensor_() {
+bool LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::verify_auxiliary_sensor_() {
   // check all interfaces are defined in lbr_system_interface.xacro (located in
   // lbr_description/ros2_control/lbr_system_interface.xacro)
   const auto &auxiliary_sensor = info_.sensors[0];
@@ -585,7 +585,7 @@ bool SystemInterface::verify_auxiliary_sensor_() {
   return true;
 }
 
-bool SystemInterface::verify_estimated_ft_sensor_() {
+bool LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::verify_estimated_ft_sensor_() {
   const auto &estimated_ft_sensor = info_.sensors[1];
   if (estimated_ft_sensor.name != HW_IF_ESTIMATED_FT_PREFIX) {
     RCLCPP_ERROR_STREAM(rclcpp::get_logger(LOGGER_NAME),
@@ -620,7 +620,7 @@ bool SystemInterface::verify_estimated_ft_sensor_() {
   return true;
 }
 
-bool SystemInterface::verify_gpios_() {
+bool LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::verify_gpios_() {
   if (info_.gpios.size() != GPIO_SIZE) {
     RCLCPP_ERROR_STREAM(rclcpp::get_logger(LOGGER_NAME),
                         lbr_fri_ros2::ColorScheme::ERROR
@@ -649,7 +649,7 @@ bool SystemInterface::verify_gpios_() {
   return true;
 }
 
-bool SystemInterface::exit_commanding_active_(
+bool LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::exit_commanding_active_(
     const KUKA::FRI::ESessionState &previous_session_state,
     const KUKA::FRI::ESessionState &session_state) {
   if (previous_session_state == KUKA::FRI::ESessionState::COMMANDING_ACTIVE &&
@@ -659,23 +659,23 @@ bool SystemInterface::exit_commanding_active_(
   return false;
 }
 
-double SystemInterface::time_stamps_to_sec_(const double &sec, const double &nano_sec) const {
+double LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::time_stamps_to_sec_(const double &sec, const double &nano_sec) const {
   return sec + nano_sec / 1.e9;
 }
 
-void SystemInterface::nan_last_hw_states_() {
+void LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::nan_last_hw_states_() {
   last_hw_measured_joint_position_.fill(std::numeric_limits<double>::quiet_NaN());
   last_hw_time_stamp_sec_ = std::numeric_limits<double>::quiet_NaN();
   last_hw_time_stamp_nano_sec_ = std::numeric_limits<double>::quiet_NaN();
 }
 
-void SystemInterface::update_last_hw_states_() {
+void LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::update_last_hw_states_() {
   last_hw_measured_joint_position_ = hw_lbr_state_.measured_joint_position;
   last_hw_time_stamp_sec_ = hw_time_stamp_sec_;
   last_hw_time_stamp_nano_sec_ = hw_time_stamp_nano_sec_;
 }
 
-void SystemInterface::compute_hw_velocity_() {
+void LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME::compute_hw_velocity_() {
   // state uninitialized
   if (std::isnan(last_hw_time_stamp_nano_sec_) || std::isnan(last_hw_measured_joint_position_[0])) {
     return;
@@ -700,4 +700,5 @@ void SystemInterface::compute_hw_velocity_() {
 
 #include <pluginlib/class_list_macros.hpp>
 
-PLUGINLIB_EXPORT_CLASS(lbr_ros2_control::SystemInterface, hardware_interface::SystemInterface)
+PLUGINLIB_EXPORT_CLASS(lbr_ros2_control::LBR_ROS2_CONTROL_SYSTEM_INTERFACE_CLASS_NAME,
+                       hardware_interface::SystemInterface)

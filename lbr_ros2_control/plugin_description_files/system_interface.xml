@@ -4,3 +4,32 @@
     <class type="lbr_ros2_control::SystemInterface"
         base_class_type="hardware_interface::SystemInterface" />
 </library>
+<library path="lbr_ros2_control_selector">
+    <!-- Selector plugin that loads the correct backend based on LBR_FRI_VERSION -->
+    <class type="lbr_ros2_control::SystemInterfaceSelector"
+        base_class_type="hardware_interface::SystemInterface" />
+</library>
+<library path="lbr_ros2_control_fri_1_11">
+    <class type="lbr_ros2_control::SystemInterfaceFri_1_11"
+        base_class_type="hardware_interface::SystemInterface" />
+</library>
+<library path="lbr_ros2_control_fri_1_14">
+    <class type="lbr_ros2_control::SystemInterfaceFri_1_14"
+        base_class_type="hardware_interface::SystemInterface" />
+</library>
+<library path="lbr_ros2_control_fri_1_15">
+    <class type="lbr_ros2_control::SystemInterfaceFri_1_15"
+        base_class_type="hardware_interface::SystemInterface" />
+</library>
+<library path="lbr_ros2_control_fri_1_16">
+    <class type="lbr_ros2_control::SystemInterfaceFri_1_16"
+        base_class_type="hardware_interface::SystemInterface" />
+</library>
+<library path="lbr_ros2_control_fri_2_5">
+    <class type="lbr_ros2_control::SystemInterfaceFri_2_5"
+        base_class_type="hardware_interface::SystemInterface" />
+</library>
+<library path="lbr_ros2_control_fri_2_7">
+    <class type="lbr_ros2_control::SystemInterfaceFri_2_7"
+        base_class_type="hardware_interface::SystemInterface" />
+</library>
