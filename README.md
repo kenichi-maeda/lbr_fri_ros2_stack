@@ -36,6 +36,24 @@ ROS 2 packages for the KUKA LBR, including communication to the real robot via t
 ## Documentation
 Full documentation available on [Read the Docs](https://lbr-stack.readthedocs.io/en/latest).
 
+## Integration with ROS
+First, clone [ros-humble](https://github.com/RoboStack/ros-humble).
+Then, run:
+
+```bash
+pixi run build
+pixi s
+export LBR_FRI_VERSION=1.11   # specify the desired FRI version here
+ros2 launch ...               # run your ros command
+```
+
+> [!NOTE]  
+> The FRI client is available for versions **1.11, 1.14, 1.15, 1.16, 1.17, 2.5, and 2.7**.  
+> During `pixi run build`, all versions from `libFRIClient_1_11.so` to `libFRIClient_2_7.so` are installed automatically.  
+> At runtime, packages that depend on FRI will link to the client matching the version specified in `LBR_FRI_VERSION`.  
+> If no version is specified, **1.15** will be used by default.
+
+
 ## Quick Start
 1. Install ROS 2 development tools
 
