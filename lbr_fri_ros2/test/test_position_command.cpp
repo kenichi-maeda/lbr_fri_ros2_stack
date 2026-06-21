@@ -7,13 +7,12 @@
 
 #include "lbr_fri_ros2/app.hpp"
 #include "lbr_fri_ros2/async_client.hpp"
-#include "lbr_fri_ros2/command_guard.hpp"
-#include "lbr_fri_ros2/filters.hpp"
+#include "lbr_fri_ros2/guards/command_guard.hpp"
 
 int main() {
   rclcpp::init(0, nullptr);
 
-  lbr_fri_ros2::PIDParameters pid_params;
+  double joint_position_tau = 0.04;
   lbr_fri_ros2::CommandGuardParameters cmd_guard_params;
   lbr_fri_ros2::StateInterfaceParameters state_interface_params;
 
@@ -21,8 +20,6 @@ int main() {
   // hardware_interface::HardwareInfo hardware_info;
 
   // 1. read this info!!!! from robot description
-
-  pid_params.p = 1.0;
 
   cmd_guard_params.joint_names = {"lbr_A1", "lbr_A2", "lbr_A3", "lbr_A4",
                                   "lbr_A5", "lbr_A6", "lbr_A7"};
@@ -39,9 +36,9 @@ int main() {
       200., 200., 200., 200., 200., 200., 200.,
   };
 
-  auto client = std::make_shared<lbr_fri_ros2::AsyncClient>(KUKA::FRI::EClientCommandMode::POSITION,
-                                                            pid_params, cmd_guard_params, "default",
-                                                            state_interface_params, true);
+  auto client = std::make_shared<lbr_fri_ros2::AsyncClient>(
+      KUKA::FRI::EClientCommandMode::POSITION, joint_position_tau, cmd_guard_params, "default",
+      state_interface_params, true);
   lbr_fri_ros2::App app(client);
 
   app.open_udp_socket();
@@ -80,12 +77,6 @@ int main() {
     // command.joint_position = state.measured_joint_position;
     // command.joint_position[6] += 0.001;
     // client->get_command_interface()->buffer_command_target(command);
-
-    // // 3. test the interfaced for safe interaction
-
-    // auto command_target = client->get_command_interface()->get_command_target();
-    // command_target.joint_position[6] += 0.001; // must not change internal value!
-    // command_target = client->get_command_interface()->get_command_target();
 
     // RCLCPP_INFO(node->get_logger(), "Command joint position: %f %f %f %f %f %f %f",
     //             command_target.joint_position[0], command_target.joint_position[1],

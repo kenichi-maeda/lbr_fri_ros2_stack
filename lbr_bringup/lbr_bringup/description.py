@@ -5,7 +5,7 @@ from launch.substitutions import (
     Command,
     FindExecutable,
     LaunchConfiguration,
-    PathJoinSubstitution,
+    PathSubstitution,
 )
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
@@ -25,15 +25,21 @@ class LBRDescriptionMixin:
         ),
         system_config_path: Optional[
             Union[LaunchConfiguration, str]
-        ] = PathJoinSubstitution(
-            [
-                FindPackageShare(
-                    LaunchConfiguration("sys_cfg_pkg", default="lbr_description")
-                ),
-                LaunchConfiguration(
-                    "sys_cfg", default="ros2_control/lbr_system_config.yaml"
-                ),
-            ]
+        ] = PathSubstitution(
+            FindPackageShare(
+                LaunchConfiguration("sys_cfg_pkg", default="lbr_ros2_control")
+            )
+        )
+        / LaunchConfiguration("sys_cfg", default="config/lbr_system_config.yaml"),
+        initial_joint_positions_path: Optional[
+            Union[LaunchConfiguration, str]
+        ] = PathSubstitution(
+            FindPackageShare(
+                LaunchConfiguration("sys_cfg_pkg", default="lbr_ros2_control")
+            )
+        )
+        / LaunchConfiguration(
+            "init_jnt_pos", default="config/initial_joint_positions.yaml"
         ),
     ) -> Dict[str, str]:
         robot_description = {
@@ -41,14 +47,10 @@ class LBRDescriptionMixin:
                 [
                     FindExecutable(name="xacro"),
                     " ",
-                    PathJoinSubstitution(
-                        [
-                            FindPackageShare("lbr_description"),
-                            "urdf",
-                            model,
-                            model,
-                        ]
-                    ),
+                    PathSubstitution(FindPackageShare("lbr_ros2_control"))
+                    / "system_integration"
+                    / model
+                    / model,
                     ".xacro",
                     " robot_name:=",
                     robot_name,
@@ -56,6 +58,8 @@ class LBRDescriptionMixin:
                     mode,
                     " system_config_path:=",
                     system_config_path,
+                    " initial_joint_positions_path:=",
+                    initial_joint_positions_path,
                 ]
             )
         }

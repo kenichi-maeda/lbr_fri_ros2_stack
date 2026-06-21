@@ -6,7 +6,7 @@ from launch.actions import DeclareLaunchArgument, ExecuteProcess
 from launch.substitutions import (
     FindExecutable,
     LaunchConfiguration,
-    PathJoinSubstitution,
+    PathSubstitution,
 )
 from launch_ros.actions import Node
 from launch_ros.parameter_descriptions import ParameterValue
@@ -63,8 +63,8 @@ class LBRMoveGroupMixin:
             )
             .robot_description(
                 os.path.join(
-                    get_package_share_directory("lbr_description"),
-                    f"urdf/{robot_name}/{robot_name}.xacro",
+                    get_package_share_directory("lbr_ros2_control"),
+                    f"system_integration/{robot_name}/{robot_name}.xacro",
                 ),
             )
             .planning_pipelines(
@@ -141,7 +141,7 @@ class LBRMoveItServoMixin:
     ) -> Node:
         return Node(
             package="moveit_servo",
-            executable="servo_node_main",
+            executable="servo_node",
             output="screen",
             namespace=robot_name,
             **kwargs,
@@ -159,7 +159,7 @@ class LBRMoveItServoMixin:
                 FindExecutable(name="ros2"),
                 "service",
                 "call",
-                PathJoinSubstitution([robot_name, "servo_node/start_servo"]),
+                PathSubstitution(robot_name) / "servo_node" / "start_servo",
                 "std_srvs/srv/Trigger",
             ],
             **kwargs,

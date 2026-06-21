@@ -2,18 +2,24 @@
 
 namespace lbr_fri_ros2 {
 PositionCommandInterface::PositionCommandInterface(
-    const PIDParameters &pid_parameters, const CommandGuardParameters &command_guard_parameters,
+    const double &joint_position_tau, const CommandGuardParameters &command_guard_parameters,
     const std::string &command_guard_variant)
-    : BaseCommandInterface(pid_parameters, command_guard_parameters, command_guard_variant) {}
+    : BaseCommandInterface(joint_position_tau, command_guard_parameters, command_guard_variant) {}
 
 void PositionCommandInterface::buffered_command_to_fri(fri_command_t_ref command,
                                                        const_idl_state_t_ref state) {
+  std::lock_guard<std::mutex> lock(command_mutex_);
 #if FRI_CLIENT_VERSION_MAJOR == 1
   if (state.client_command_mode != KUKA::FRI::EClientCommandMode::POSITION) {
-    std::string err = "Expected robot in '" +
-                      EnumMaps::client_command_mode_map(KUKA::FRI::EClientCommandMode::POSITION) +
-                      "' command mode got '" +
-                      EnumMaps::client_command_mode_map(state.client_command_mode) + "'";
+    std::string err =
+        "Client side (configured via client_command_mode in lbr_system_config.yaml) "
+        "expected robot in '" +
+        EnumMaps::client_command_mode_map(KUKA::FRI::EClientCommandMode::POSITION) +
+        "' command mode, but robot was in '" +
+        EnumMaps::client_command_mode_map(state.client_command_mode) +
+        "' command mode. Correct the configurations or run the robot in '" +
+        EnumMaps::client_command_mode_map(KUKA::FRI::EClientCommandMode::POSITION) +
+        "' command mode.";
     RCLCPP_ERROR_STREAM(rclcpp::get_logger(LOGGER_NAME()),
                         ColorScheme::ERROR << err.c_str() << ColorScheme::ENDC);
     throw std::runtime_error(err);
@@ -22,17 +28,37 @@ void PositionCommandInterface::buffered_command_to_fri(fri_command_t_ref command
 #if FRI_CLIENT_VERSION_MAJOR >= 2
   if (state.client_command_mode != KUKA::FRI::EClientCommandMode::JOINT_POSITION) {
     std::string err =
-        "Expected robot in " +
+        "Client side (configured via client_command_mode in lbr_system_config.yaml) "
+        "expected robot in '" +
         EnumMaps::client_command_mode_map(KUKA::FRI::EClientCommandMode::JOINT_POSITION) +
-        " command mode.";
-    RCLCPP_ERROR(rclcpp::get_logger(LOGGER_NAME()), err.c_str());
+        " command mode, but robot was in '" +
+        EnumMaps::client_command_mode_map(state.client_command_mode) +
+        "' command mode. Correct the configurations or run the robot in '" +
+        EnumMaps::client_command_mode_map(KUKA::FRI::EClientCommandMode::JOINT_POSITION) +
+        "' command mode.";
+    RCLCPP_ERROR_STREAM(rclcpp::get_logger(LOGGER_NAME()),
+                        ColorScheme::ERROR << err.c_str() << ColorScheme::ENDC);
     throw std::runtime_error(err);
   }
 #endif
-  if (std::any_of(command_target_.joint_position.cbegin(), command_target_.joint_position.cend(),
-                  [](const double &v) { return std::isnan(v); })) {
-    this->init_command(state);
+  if (!joint_position_filter_.is_initialized()) {
+    joint_position_filter_.initialize(state.sample_time);
   }
+
+  if (!command_initialized_) {
+    std::string err = "Uninitialized command.";
+    RCLCPP_ERROR_STREAM(rclcpp::get_logger(LOGGER_NAME()),
+                        ColorScheme::ERROR << err.c_str() << ColorScheme::ENDC);
+    throw std::runtime_error(err);
+  }
+
+  if (!std::any_of(command_target_.joint_position.cbegin(), command_target_.joint_position.cend(),
+                   [](const double &v) { return std::isnan(v); })) {
+    // write command_target_ to command_ (with exponential smooth on joint positions), else use
+    // internal command_
+    joint_position_filter_.compute(command_target_.joint_position, command_.joint_position);
+  }
+
   if (!command_guard_) {
     std::string err = "Uninitialized command guard.";
     RCLCPP_ERROR_STREAM(rclcpp::get_logger(LOGGER_NAME()),
@@ -40,18 +66,12 @@ void PositionCommandInterface::buffered_command_to_fri(fri_command_t_ref command
     throw std::runtime_error(err);
   }
 
-  // PID
-  joint_position_pid_.compute(
-      command_target_.joint_position, state.measured_joint_position,
-      std::chrono::nanoseconds(static_cast<int64_t>(state.sample_time * 1.e9)),
-      command_.joint_position);
-
   // validate
   if (!command_guard_->is_valid_command(command_, state)) {
-    std::string err = "Invalid command.";
-    RCLCPP_ERROR_STREAM(rclcpp::get_logger(LOGGER_NAME()),
-                        ColorScheme::ERROR << err.c_str() << ColorScheme::ENDC);
-    throw std::runtime_error(err);
+    std::string warn = "Overriding invalid command to neutral command.";
+    RCLCPP_WARN_STREAM(rclcpp::get_logger(LOGGER_NAME()),
+                       ColorScheme::WARNING << warn.c_str() << ColorScheme::ENDC);
+    neutralize_command_(state, command_);
   }
 
   // write joint position to output

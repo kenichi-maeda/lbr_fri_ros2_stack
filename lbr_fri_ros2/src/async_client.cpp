@@ -2,12 +2,13 @@
 
 namespace lbr_fri_ros2 {
 AsyncClient::AsyncClient(const KUKA::FRI::EClientCommandMode &client_command_mode,
-                         const PIDParameters &pid_parameters,
+                         const double &joint_position_tau,
                          const CommandGuardParameters &command_guard_parameters,
                          const std::string &command_guard_variant,
+                         const StateGuardParameters &state_guard_parameters,
                          const StateInterfaceParameters &state_interface_parameters,
                          const bool &open_loop)
-    : open_loop_(open_loop) {
+    : on_enter_commanding_active_state_guard_(state_guard_parameters), open_loop_(open_loop) {
   RCLCPP_INFO_STREAM(rclcpp::get_logger(LOGGER_NAME),
                      ColorScheme::OKBLUE << "Configuring client" << ColorScheme::ENDC);
 
@@ -26,16 +27,16 @@ AsyncClient::AsyncClient(const KUKA::FRI::EClientCommandMode &client_command_mod
 #endif
   {
     command_interface_ptr_ = std::make_shared<PositionCommandInterface>(
-        pid_parameters, command_guard_parameters, command_guard_variant);
+        joint_position_tau, command_guard_parameters, command_guard_variant);
     break;
   }
   case KUKA::FRI::EClientCommandMode::TORQUE:
     command_interface_ptr_ = std::make_shared<TorqueCommandInterface>(
-        pid_parameters, command_guard_parameters, command_guard_variant);
+        joint_position_tau, command_guard_parameters, command_guard_variant);
     break;
   case KUKA::FRI::EClientCommandMode::WRENCH:
     command_interface_ptr_ = std::make_shared<WrenchCommandInterface>(
-        pid_parameters, command_guard_parameters, command_guard_variant);
+        joint_position_tau, command_guard_parameters, command_guard_variant);
     break;
   default:
     std::string err = "Unsupported client command mode.";
@@ -48,6 +49,7 @@ AsyncClient::AsyncClient(const KUKA::FRI::EClientCommandMode &client_command_mod
   // create state interface
   state_interface_ptr_ = std::make_shared<StateInterface>(state_interface_parameters);
   state_interface_ptr_->log_info();
+  on_enter_commanding_active_state_guard_.log_info();
   RCLCPP_INFO_STREAM(rclcpp::get_logger(LOGGER_NAME),
                      "Open loop '" << (open_loop_ ? "true" : "false") << "'");
   RCLCPP_INFO_STREAM(rclcpp::get_logger(LOGGER_NAME),
@@ -67,6 +69,15 @@ void AsyncClient::onStateChange(KUKA::FRI::ESessionState old_state,
   // initialize command
   state_interface_ptr_->set_state(robotState());
   command_interface_ptr_->init_command(state_interface_ptr_->get_state());
+
+  // state entry handles (safety checks)
+  switch (new_state) {
+  case KUKA::FRI::COMMANDING_ACTIVE:
+    on_enter_commanding_active_();
+    break;
+  default:
+    break;
+  }
 }
 
 void AsyncClient::monitor() { state_interface_ptr_->set_state(robotState()); };
@@ -90,5 +101,52 @@ void AsyncClient::command() {
       robotCommand(),
       state_interface_ptr_->get_state()); // current state accessed via state interface (allows for
                                           // open loop and is statically sized)
+}
+
+void AsyncClient::on_enter_commanding_active_() {
+  // if robot is in impedance or Cartesian impedance control mode, override open_loop_ to false
+  // also refer to https://github.com/lbr-stack/lbr_fri_ros2_stack/issues/226
+  auto control_mode = robotState().getControlMode();
+  if (control_mode == KUKA::FRI::EControlMode::JOINT_IMP_CONTROL_MODE ||
+      control_mode == KUKA::FRI::EControlMode::CART_IMP_CONTROL_MODE) {
+    if (open_loop_) {
+      RCLCPP_INFO_STREAM(rclcpp::get_logger(LOGGER_NAME),
+                         "Overriding open loop from '"
+                             << (open_loop_ ? "true" : "false")
+                             << "' to 'false' since LBR is in control mode '"
+                             << EnumMaps::control_mode_map(control_mode)
+                             << "'. Please refer to "
+                                "[https://github.com/lbr-stack/lbr_fri_ros2_stack/issues/226].");
+      open_loop_ = false;
+    }
+  }
+
+  switch (control_mode) {
+  case KUKA::FRI::EControlMode::CART_IMP_CONTROL_MODE:
+  case KUKA::FRI::EControlMode::JOINT_IMP_CONTROL_MODE: {
+    RCLCPP_INFO_STREAM(rclcpp::get_logger(LOGGER_NAME),
+                       "Checking external torques on activation of compliant control mode...");
+    if (!on_enter_commanding_active_state_guard_.is_valid_state(
+            state_interface_ptr_->get_state())) {
+      std::string err =
+          "External torque limits exceeded. Perform load data calibration! Alternatively, disable "
+          "the check in lbr_system_config.yaml. Please be careful when disabling the check!";
+      RCLCPP_ERROR_STREAM(rclcpp::get_logger(LOGGER_NAME),
+                          ColorScheme::ERROR << err.c_str() << ColorScheme::ENDC);
+      throw std::runtime_error(err);
+    }
+    RCLCPP_INFO_STREAM(rclcpp::get_logger(LOGGER_NAME), "External torques within limits.");
+    break;
+  }
+  case KUKA::FRI::EControlMode::NO_CONTROL:
+  case KUKA::FRI::EControlMode::POSITION_CONTROL_MODE:
+    // no safety check needed since not compliant
+    break;
+  default:
+    std::string err = "Unsupported control mode.";
+    RCLCPP_ERROR_STREAM(rclcpp::get_logger(LOGGER_NAME),
+                        ColorScheme::ERROR << err.c_str() << ColorScheme::ENDC);
+    throw std::runtime_error(err);
+  }
 }
 } // namespace lbr_fri_ros2

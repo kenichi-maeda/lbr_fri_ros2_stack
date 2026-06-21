@@ -1,5 +1,5 @@
 # lbr_fri_ros2_stack
-[![License](https://img.shields.io/github/license/lbr-stack/lbr_fri_ros2_stack)](https://github.com/lbr-stack/lbr_fri_ros2_stack/tree/rolling?tab=Apache-2.0-1-ov-file#readme) 
+[![License](https://img.shields.io/github/license/lbr-stack/lbr_fri_ros2_stack)](https://github.com/lbr-stack/lbr_fri_ros2_stack/tree/jazzy?tab=Apache-2.0-1-ov-file#readme) 
 [![Documentation Status](https://readthedocs.org/projects/lbr-stack/badge/?version=latest)](https://lbr-stack.readthedocs.io/en/latest/?badge=latest)
 [![JOSS](https://joss.theoj.org/papers/c43c82bed833c02503dd47f2637192ef/status.svg)](https://joss.theoj.org/papers/c43c82bed833c02503dd47f2637192ef) 
 [![Code Style: Black](https://img.shields.io/badge/code%20style-black-000000.svg)](https://github.com/psf/black)
@@ -15,10 +15,18 @@ ROS 2 packages for the KUKA LBR, including communication to the real robot via t
             <th align="left" width="25%">LBR Med 14 R820</th>
         </tr>
         <tr>
-            <td align="center"><img src="https://raw.githubusercontent.com/lbr-stack/lbr_fri_ros2_stack/rolling/lbr_fri_ros2_stack/doc/img/foxglove/iiwa7_r800.png" alt="LBR IIWA 7 R800"></td>
-            <td align="center"><img src="https://raw.githubusercontent.com/lbr-stack/lbr_fri_ros2_stack/rolling/lbr_fri_ros2_stack/doc/img/foxglove/iiwa14_r820.png" alt="LBR IIWA 14 R820"></td>
-            <td align="center"><img src="https://raw.githubusercontent.com/lbr-stack/lbr_fri_ros2_stack/rolling/lbr_fri_ros2_stack/doc/img/foxglove/med7_r800.png" alt="LBR Med 7 R800"></td>
-            <td align="center"><img src="https://raw.githubusercontent.com/lbr-stack/lbr_fri_ros2_stack/rolling/lbr_fri_ros2_stack/doc/img/foxglove/med14_r820.png" alt="LBR Med 14 R820"></td>
+            <td align="center">
+                <img src="https://raw.githubusercontent.com/lbr-stack/lbr_fri_ros2_stack/jazzy/lbr_fri_ros2_stack/doc/img/foxglove/iiwa7_r800.png" alt="LBR IIWA 7 R800">
+            </td>
+            <td align="center">
+                <img src="https://raw.githubusercontent.com/lbr-stack/lbr_fri_ros2_stack/jazzy/lbr_fri_ros2_stack/doc/img/foxglove/iiwa14_r820.png" alt="LBR IIWA 14 R820">
+            </td>
+            <td align="center">
+                <img src="https://raw.githubusercontent.com/lbr-stack/lbr_fri_ros2_stack/jazzy/lbr_fri_ros2_stack/doc/img/foxglove/med7_r800.png" alt="LBR Med 7 R800">
+            </td>
+            <td align="center">
+                <img src="https://raw.githubusercontent.com/lbr-stack/lbr_fri_ros2_stack/jazzy/lbr_fri_ros2_stack/doc/img/foxglove/med14_r820.png" alt="LBR Med 14 R820">
+            </td>
         </tr>
     </table>
 </body>
@@ -26,12 +34,13 @@ ROS 2 packages for the KUKA LBR, including communication to the real robot via t
 ## Status
 | OS             | ROS Distribution | FRI Version |  Build Status |
 | :------------- | :--------------- | :---------- |  :----------- |
-| `Ubuntu-24.04` | `rolling`         | `1.11`      |  [![ubuntu-24.04-fri-1.11](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.11.yml/badge.svg)](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.11.yml) |
-| `Ubuntu-24.04` | `rolling`         | `1.14`      |  [![ubuntu-24.04-fri-1.14](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.14.yml/badge.svg)](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.14.yml) |
-| `Ubuntu-24.04` | `rolling`         | `1.15`      |  [![ubuntu-24.04-fri-1.15](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.15.yml/badge.svg)](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.15.yml) |
-| `Ubuntu-24.04` | `rolling`         | `1.16`      |  [![ubuntu-24.04-fri-1.16](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.16.yml/badge.svg)](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.16.yml) |
-| `Ubuntu-24.04` | `rolling`         | `2.5`      |  [![ubuntu-24.04-fri-2.5](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-2.5.yml/badge.svg)](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-2.5.yml) |
-| `Ubuntu-24.04` | `rolling`         | `2.7`      |  [![ubuntu-24.04-fri-2.7](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-2.7.yml/badge.svg)](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-2.7.yml) |
+| `Ubuntu-24.04` | `jazzy`         | `1.11`      |  [![ubuntu-24.04-fri-1.11](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.11.yml/badge.svg)](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.11.yml) |
+| `Ubuntu-24.04` | `jazzy`         | `1.14`      |  [![ubuntu-24.04-fri-1.14](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.14.yml/badge.svg)](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.14.yml) |
+| `Ubuntu-24.04` | `jazzy`         | `1.15`      |  [![ubuntu-24.04-fri-1.15](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.15.yml/badge.svg)](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.15.yml) |
+| `Ubuntu-24.04` | `jazzy`         | `1.16`      |  [![ubuntu-24.04-fri-1.16](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.16.yml/badge.svg)](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-1.16.yml) |
+| `Ubuntu-24.04` | `jazzy`         | `2.5`      |  [![ubuntu-24.04-fri-2.5](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-2.5.yml/badge.svg)](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-2.5.yml) |
+| `Ubuntu-24.04` | `jazzy`         | `2.6`      |  [![ubuntu-24.04-fri-2.6](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-2.5.yml/badge.svg)](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-2.5.yml) |
+| `Ubuntu-24.04` | `jazzy`         | `2.7`      |  [![ubuntu-24.04-fri-2.7](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-2.7.yml/badge.svg)](https://github.com/lbr-stack/lbr_fri_ros2_stack/actions/workflows/build-ubuntu-24.04-fri-2.7.yml) |
 
 ## Documentation
 Full documentation available on [Read the Docs](https://lbr-stack.readthedocs.io/en/latest).
@@ -46,10 +55,11 @@ Full documentation available on [Read the Docs](https://lbr-stack.readthedocs.io
 2. Create a workspace, clone, and install dependencies
 
     ```shell
-    source /opt/ros/rolling/setup.bash
+    source /opt/ros/jazzy/setup.bash
     export FRI_CLIENT_VERSION=1.15
     mkdir -p lbr-stack/src && cd lbr-stack
-    vcs import src --input https://raw.githubusercontent.com/lbr-stack/lbr_fri_ros2_stack/rolling/lbr_fri_ros2_stack/repos-fri-${FRI_CLIENT_VERSION}.yaml
+    git clone https://github.com/lbr-stack/lbr_fri_ros2_stack.git -b jazzy src/lbr_fri_ros2_stack --depth 1
+    vcs import src < src/lbr_fri_ros2_stack/lbr_fri_ros2_stack/repos-fri-${FRI_CLIENT_VERSION}.yaml
     rosdep install --from-paths src -i -r -y
     ```
 
@@ -84,17 +94,45 @@ Full documentation available on [Read the Docs](https://lbr-stack.readthedocs.io
 
 Now, run the [demos](https://lbr-stack.readthedocs.io/en/latest/lbr_fri_ros2_stack/lbr_demos/doc/lbr_demos.html). To get started with the real robot, checkout the [Hardware Setup](https://lbr-stack.readthedocs.io/en/latest/lbr_fri_ros2_stack/lbr_fri_ros2_stack/doc/hardware_setup.html).
 
+## Repositories Using This Project
+- [KUKA ROS 2 Controllers](https://github.com/idra-lab/kuka_lbr_control): A repository for controlling KUKA LBR IIWA and Med robots using various control algorithms.
+
+<body>
+    <table style="width:100%; table-layout:fixed;">
+        <tr>
+            <th  align="left" width="33%">Kinematics Control</th>
+            <th  align="left" width="33%">Gravity Compensation</th>
+            <th  align="left" width="33%">Impedance Control</th>
+        </tr>
+        <tr>
+            <td align="center">
+                <img src="https://raw.githubusercontent.com/idra-lab/kuka_lbr_control/main/assets/videos/kin.gif" alt="Kinematics Control">
+            </td>
+            <td align="center">
+                <img src="https://raw.githubusercontent.com/idra-lab/kuka_lbr_control/main/assets/videos/grav.gif" alt="Gravity Compensation">
+            </td>
+            <td align="center">
+                <img src="https://raw.githubusercontent.com/idra-lab/kuka_lbr_control/main/assets/videos/imp.gif" alt="Impedance Control">
+            </td>
+        </tr>
+    </table>
+</body>
+
 ## Citation
 If you enjoyed using this repository for your work, we would really appreciate ❤️ if you could leave a ⭐ and / or cite it, as it helps us to continue offering support.
 
 ```
-@misc{huber2023lbrstack,
-      title={LBR-Stack: ROS 2 and Python Integration of KUKA FRI for Med and IIWA Robots}, 
-      author={Martin Huber and Christopher E. Mower and Sebastien Ourselin and Tom Vercauteren and Christos Bergeles},
-      year={2023},
-      eprint={2311.12709},
-      archivePrefix={arXiv},
-      primaryClass={cs.RO}
+@article{Huber2024,
+  doi       = {10.21105/joss.06138},
+  url       = {https://doi.org/10.21105/joss.06138},
+  year      = {2024},
+  publisher = {The Open Journal},
+  volume    = {9},
+  number    = {103},
+  pages     = {6138},
+  author    = {Martin Huber and Christopher E. Mower and Sebastien Ourselin and Tom Vercauteren and Christos Bergeles},
+  title     = {LBR-Stack: ROS 2 and Python Integration of KUKA FRI for Med and IIWA Robots},
+  journal   = {Journal of Open Source Software}
 }
 ```
 

@@ -10,11 +10,12 @@
 #include "controller_interface/controller_interface.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "realtime_tools/realtime_buffer.h"
+#include "realtime_tools/realtime_buffer.hpp"
 
 #include "friLBRState.h"
 
 #include "lbr_fri_idl/msg/lbr_joint_position_command.hpp"
+#include "lbr_fri_ros2/formatting.hpp"
 #include "lbr_fri_ros2/types.hpp"
 
 namespace lbr_ros2_control {

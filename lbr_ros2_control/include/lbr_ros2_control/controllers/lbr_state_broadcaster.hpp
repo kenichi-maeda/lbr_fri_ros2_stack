@@ -12,13 +12,14 @@
 #include "controller_interface/controller_interface.hpp"
 #include "hardware_interface/types/hardware_interface_type_values.hpp"
 #include "rclcpp/rclcpp.hpp"
-#include "realtime_tools/realtime_publisher.h"
+#include "realtime_tools/realtime_publisher.hpp"
 
 #include "friClientIf.h"
 #include "friClientVersion.h"
 #include "friLBRState.h"
 
 #include "lbr_fri_idl/msg/lbr_state.hpp"
+#include "lbr_fri_ros2/formatting.hpp"
 #include "lbr_fri_ros2/types.hpp"
 #include "lbr_ros2_control/system_interface_type_values.hpp"
 
@@ -53,6 +54,7 @@ protected:
   lbr_fri_ros2::jnt_name_array_t joint_names_;
   std::unordered_map<std::string, std::unordered_map<std::string, double>> state_interface_map_;
 
+  lbr_fri_idl::msg::LBRState lbr_state_;
   rclcpp::Publisher<lbr_fri_idl::msg::LBRState>::SharedPtr state_publisher_ptr_;
   std::shared_ptr<realtime_tools::RealtimePublisher<lbr_fri_idl::msg::LBRState>>
       rt_state_publisher_ptr_;

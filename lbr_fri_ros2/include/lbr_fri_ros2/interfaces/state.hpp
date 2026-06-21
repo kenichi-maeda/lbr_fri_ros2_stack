@@ -1,6 +1,9 @@
 #ifndef LBR_FRI_ROS2__INTERFACES__STATE_HPP_
 #define LBR_FRI_ROS2__INTERFACES__STATE_HPP_
+
 #include <atomic>
+#include <cstring>
+#include <mutex>
 #include <string>
 
 #include "rclcpp/logger.hpp"
@@ -14,8 +17,8 @@
 
 namespace lbr_fri_ros2 {
 struct StateInterfaceParameters {
-  double external_torque_cutoff_frequency; /*Hz*/
-  double measured_torque_cutoff_frequency; /*Hz*/
+  double external_torque_tau = 0.01; /*seconds*/
+  double measured_torque_tau = 0.01; /*seconds*/
 };
 
 class StateInterface {
@@ -24,9 +27,12 @@ protected:
 
 public:
   StateInterface() = delete;
-  StateInterface(const StateInterfaceParameters &state_interface_parameters = {10.0, 10.0});
+  StateInterface(const StateInterfaceParameters &state_interface_parameters = {0.04, 0.04});
 
-  inline const_idl_state_t_ref get_state() const { return state_; };
+  idl_state_t get_state() const {
+    std::lock_guard<std::mutex> lock(state_mutex_);
+    return state_;
+  };
 
   void set_state(const_fri_state_t_ref state);
   void set_state_open_loop(const_fri_state_t_ref state, const_jnt_array_t_ref joint_position);
@@ -39,10 +45,11 @@ public:
 protected:
   void init_filters_();
 
+  mutable std::mutex state_mutex_;
   std::atomic_bool state_initialized_;
   idl_state_t state_;
   StateInterfaceParameters parameters_;
-  JointExponentialFilterArray external_torque_filter_, measured_torque_filter_;
+  ExponentialFilterArray<N_JNTS> external_torque_filter_, measured_torque_filter_;
 };
 } // namespace lbr_fri_ros2
 #endif // LBR_FRI_ROS2__INTERFACES__STATE_HPP_
